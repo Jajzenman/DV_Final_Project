@@ -215,6 +215,7 @@ console.log('xScale.domain:',xScale.domain())
   xAxisGroup
    .transition()
    .duration(1000)
+   .attr("stroke","blue")
    .call(xAxis.scale(xScale))// need to udpate the scale
  
   yScale.domain([0, d3.max(filteredData, d => d.FB_Population)])
@@ -231,7 +232,7 @@ console.log('xScale.domain:',xScale.domain())
     .y(d => yScale(d.FB_Population))
 
   // + DRAW LINE AND/OR AREA
-  svg.selectAll(".line")
+ /*  svg.selectAll(".line")
     .data([filteredData]) // data needs to take an []
     .join("path")
     .attr("class", 'line')
@@ -240,15 +241,36 @@ console.log('xScale.domain:',xScale.domain())
     .transition()
     .duration(1000)
     .attr("d", d => lineGen(d))
-}
-// const rect = svg
-//     .selectAll("rect.bar")
-//     .data([filteredData])
-//     .join("rect")
-//     .attr("class","bar")
-//     .attr("width", xScale.bandwidth())
-//     .attr("x", d=> xScale(d.FB_Population))
-//     .attr("y", d=> yScale(d.State))
-//     .attr("height", d=> height - yScale(d.FB_Population))  
-//     .transition()
-//     .duration(1000)
+ */
+ const rect = svg
+     .selectAll("rect.bar")
+     .data([state.data])
+    // .data([filteredData])
+     .join("rect")
+     .attr("class","bar")
+     .attr("width", xScale.bandwidth())
+     .attr("x", d=> xScale(d.State))
+     .attr("y", d=> yScale(d.FB_Population))
+     .attr("height", d=> height)
+     .transition()
+     .duration(1000)
+
+
+     /* DOM MANIPULATION 
+     * */
+ /*    const label = document.getElementById("counter-label")
+    const input = document.getElementById("counter-input")
+    const button = document.getElementById("counter-submit")
+    
+    // code review by Katie Donia 2/16/2023
+    let counter = 0
+    
+    function updateCounter() {
+      // update the name using the value of the input element
+      counter = counter + 1
+      button.innerText = "Increment Counter"
+      document.getElementById("counter-label").innerHTML = counter
+    */ 
+    
+
+    }
