@@ -36,7 +36,6 @@ let state = {
   data: [],
   selection: "All", // + YOUR FILTER SELECTION
 };
-
 /* LOAD DATA */
 // + SET YOUR DATA PATH
 
@@ -45,7 +44,7 @@ let state = {
         return {
           GEO_LOC_ID: d.GEO_ID,
           State: d.NAME,
-          FB_Population: d.S0502_C01_001E, 
+          FB_Population: +d.S0502_C01_001E, 
           FB_pctNaturalized: d.S0502_C01_002E, 
           FB_pctNotCitizen: d.S0502_C01_003E
         
@@ -62,10 +61,15 @@ let state = {
         state.data = data;
         myFirstState = state.data[0]
         firstStateNaturalized = myFirstState.FB_Naturalized
-       /* console.log("Naturalized state:", state=> state.FB_Naturalized)
-        console.log("Population:", d.FB_Population)
-        console.log("Population state:", state.FB_Population)
-*/
+        typeof myFirstState.FB_Population
+        console.log("1-selection", state.selection)
+
+
+       // console.log("Naturalized state:", state=> state.FB_Naturalized)
+
+       console.log("Population:", typeof myFirstState.FB_Population)
+       // console.log("Population state:", state.FB_Population)
+
     init();
   });
 
@@ -81,9 +85,10 @@ function init() {
     console.log('xScale: ' ,xScale.domain())
 
   yScale = d3.scaleLinear()
-    .domain(d3.extent(state.data, d => d.FB_Population))
-    .range([height - margin.bottom, margin.top])
+  .domain(d3.extent(state.data, d => d.FB_Population))
+  .range([height - margin.bottom, margin.top])
     console.log('yScale: ' ,yScale.domain())
+ //   console.log('yScale Pop: ', FB_Population)
     //.range([0,20000000])
     // console.log("Pop:", d.FB_Population)
 
@@ -113,12 +118,14 @@ selectElement2.selectAll("option")
   .append('option')
   .attr('value', (d) => d[2])
   .text((d) => d[1]);
+  console.log('I am here:=>SelectElement2-Property')
   console.log(FB_FieldList)
   console.log('Selected Property been updated to: ', FB_FieldList.selection)
 
   // + SET SELECT ELEMENT'S DEFAULT VALUE (optional)
 selectElement2.on("change", event => {
     FB_FieldList.selection = event.target.value
+    console.log(FB_FieldList)
     console.log(FB_FieldList)
     console.log('Selected Property been updated to: ', FB_FieldList.selection)
 });
@@ -188,6 +195,15 @@ selectElement2.on("change", event => {
 /* DRAW FUNCTION */
 // we call this everytime there is an update to the data/state
 function draw() {
+
+  // NewTitle= svg.append("text")
+  // .attr("class", "header2")
+  // .text()
+  // .attr("transform", `translate(${margin.right}, ${0})`)
+  // .call(yAxis)
+
+
+
   // + FILTER DATA BASED ON STATE
   const filteredData = state.data
    
@@ -195,22 +211,25 @@ function draw() {
   if (state.selection !== 'All') 
     {
     filteredData.filter(d => d.State === state.selection)
-    console.log("filteredData.value <> 'All'", filteredData.value)  }
-  else
+    console.log("I am here:==>filteredData.value <> 'All'", filteredData.value)  }
+    else
     {filteredData.filter(d => d.State)
-      console.log("filteredData.value = 'All'", filteredData.value)
+      console.log("I am here:==>filteredData.value = 'All'", filteredData.filter(d => d.State === state.selection))
       console.log("filteredData = 'All'", filteredData)
       console.log("filteredData.map = 'All'", filteredData.map)
-
+      console.log("filteredData.selection = 'All'", filteredData.selection)
+  
     }
-ab=filteredData.selection
-    // console.log('filteredData', filteredData)
-    // console.log('state.selection', filteredData.selection)
+//ab=filteredData.selection
+ //  console.log('filteredData', filteredData)
+  // console.log('state.selection', filteredData.selection)
+ //  console.log('state.selection-ab', ab)
 
     // console.log('state.selection', state.selection)
   // + UPDATE SCALE(S), if needed
   xScale.domain(filteredData.map(d => d.State))
 console.log('xScale.domain:',xScale.domain())
+
   // + UPDATE AXIS/AXES, if needed
   xAxisGroup
    .transition()
@@ -218,7 +237,11 @@ console.log('xScale.domain:',xScale.domain())
    .attr("stroke","blue")
    .call(xAxis.scale(xScale))// need to udpate the scale
  
-  yScale.domain([0, d3.max(filteredData, d => d.FB_Population)])
+ // yScale.domain([0, d3.max(filteredData, d => d.FB_Population)])
+  
+  yScale.domain(d3.extent(filteredData, d => d.FB_Population))
+  console.log('xScale.domain:2',xScale.domain())
+
   // + UPDATE AXIS/AXES, if needed
 
   yAxisGroup
@@ -250,11 +273,15 @@ console.log('xScale.domain:',xScale.domain())
      .attr("class","bar")
      .attr("width", xScale.bandwidth())
      .attr("x", d=> xScale(d.State))
-     .attr("y", d=> yScale(d.FB_Population))
-     .attr("height", d=> height)
+     .attr("y", d=> yScale(+d.FB_Population))
+     //.attr("height", d=> height-yScale(d.FB_Population))
+   //  .attr("height", scales.yScale.bandwidth())
+     .attr("height",  height - margin.bottom - margin.top )
+   //  .attr("height",  height - margin.bottom - margin.top - (d=>yScale(+d.FB_Population)))
+ //    .attr("height",  height-yScale(d=> +d.FB_Population)-margin)
      .transition()
      .duration(1000)
-
+//console.log('y:', yScale )
 
      /* DOM MANIPULATION 
      * */
