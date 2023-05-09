@@ -1,239 +1,224 @@
-/* 2-1 quantities and amounts */
-
-
-var ab2 = Math.round(17.2)
-
 /* CONSTANTS AND GLOBALS */
-const width = window.innerWidth * .8;
-const height = window.innerHeight * .8;
-const margin = 50;
-var yTextPadding = 20;
-const red =    "#FF0000";
-const yellow = "#FFFF00";
-const green =  "#00FF00";
-const blue =   "#0000FF";
-const purple = "#A020F0";
+const width = window.innerWidth * 0.9,
+  height = window.innerHeight * 0.9,
+  margin = { top: 20, bottom: 125, left: 60, right: 60 },
+  radius = 3;
+  const color = d3.scaleOrdinal()
+  .range(["#d0743c","#6b486b", "#a05d56", "#ff8c00"])
 
+// these variables allow us to access anything we manipulate in init() but need access to in draw().
+// All these variables are empty before we assign something to them.
+let svg;
+let xScale;
+let yScale;
+let xAxis;
+let yAxis;
+let xAxisGroup;
+let yAxisGroup;
+let myFirstState = [];
+let firstStateNaturalized = 0;
+let FB_FieldList = [
+    [1,'Population','d.FB_Population'],
+    [2,'Not A Citizen','d.FB_pctNaturalized'],
+    [3,'Naturalized', 'd.FB_pctNotCitizen']
+];
+let StartingField ="Population";
+let ChosenField = 1;
+let filteredData = [];
+let unFilteredData = [];
+let clone;
+
+/* APPLICATION STATE */
+let state = {
+  data: [],
+  selection: "Select a state", // + YOUR FILTER SELECTION
+};
 /* LOAD DATA */
-
+// + SET YOUR DATA PATH
 
     /* LOAD DATA */
-d3.csv('../data/Cleaned Data by State.csv', d=> {
-  return {
-    GEO_LOC_ID: d.GEO_ID,
-    State: d.NAME,
-    FB_Population: d.S0502_C01_001E, 
-    FB_pctNaturalized: d.S0502_C01_002E, 
-    FB_pctNotCitizen: d.S0502_C01_003E, 
-    FB_WR_Population: d.S0502_C01_004E, 
-    FB_WR_pctEurope: d.S0502_C01_005E, 
-    FB_WR_pctAsia: d.S0502_C01_006E, 
-    FB_WR_pctAfrica: d.S0502_C01_007E, 
-    FB_WR_pctOceania: d.S0502_C01_008E, 
-    FB_WR_pctSouthAmer: d.S0502_C01_009E, 
-    FB_WR_pctNorthAmer: d.S0502_C01_010E, 
-    FB_SEX_pctMale: d.S0502_C01_011E, 
-    FB_SEX_pctFemale: d.S0502_C01_012E, 
-    FB_SEX_pct0_5_years: d.S0502_C01_013E, 
-    FB_SEX_pct5_to_17_years: d.S0502_C01_014E, 
-    FB_SEX_pct18_to_24_years: d.S0502_C01_015E, 
-    FB_SEX_pct25_to_44_years: d.S0502_C01_016E, 
-    FB_SEX_pct45_to_54_years: d.S0502_C01_017E, 
-    FB_SEX_pct55_to_64_years: d.S0502_C01_018E, 
-    FB_SEX_pct65_to_74_years: d.S0502_C01_019E, 
-    FB_SEX_pct75_to_84_years: d.S0502_C01_020E, 
-    FB_SEX_pct85_over: d.S0502_C01_021E, 
-    FB_SEX_Median_age_years: d.S0502_C01_022E, 
-    FB_RACE_pct: d.S0502_C01_023E, 
-    FB_RACE_pctWhite: d.S0502_C01_024E, 
-    FB_RACE_pctBlack: d.S0502_C01_025E, 
-    FB_RACE_pctAmerIndian: d.S0502_C01_026E, 
-    FB_RACE_pctAsian: d.S0502_C01_027E, 
-    FB_RACE_pctHawaiian: d.S0502_C01_028E, 
-    FB_RACE_pctOtherRace: d.S0502_C01_029E, 
-    FB_RACE_pctMixedRace: d.S0502_C01_030E, 
-    FB_RACE_pctLatino: d.S0502_C01_031E, 
-    FB_RACE_pctWhite_NotLatino: d.S0502_C01_032E, 
-    FB_HOUSEHOLD_pctMarried: d.S0502_C01_033E, 
-    FB_HOUSEHOLD_pctOther: d.S0502_C01_034E, 
-    FB_HOUSEHOLD_Avg_Size: d.S0502_C01_035E, 
-    FB_HOUSEHOLD_AvgFamilySize: d.S0502_C01_036E, 
-    FB_MARITAL_Married15plusYears: d.S0502_C01_037E, 
-    FB_MARITAL_pctNeverMarried15plusYears: d.S0502_C01_038E, 
-    FB_MARITAL_pctNow_married: d.S0502_C01_039E, 
-    FB_MARITAL_pctDivorced: d.S0502_C01_040E, 
-    FB_MARITAL_pctWidowed: d.S0502_C01_041E, 
-    FB_SCHOOL_PopulationInSchool: d.S0502_C01_042E, 
-    FB_SCHOOL_pctNursery: d.S0502_C01_043E, 
-    FB_SCHOOL_pctElementarySchool: d.S0502_C01_044E, 
-    FB_SCHOOL_pctHighSchool: d.S0502_C01_045E, 
-    FB_SCHOOL_pctCollege: d.S0502_C01_046E, 
-    FB_ED_COMPLETED_Population_25_yrPlus: d.S0502_C01_047E, 
-    FB_ED_COMPLETED_pctLessThan_HS: d.S0502_C01_048E, 
-    FB_ED_COMPLETED_pctHighSchool: d.S0502_C01_049E, 
-    FB_ED_COMPLETED_pctSomeCollege: d.S0502_C01_050E, 
-    FB_ED_COMPLETED_pctBachelor: d.S0502_C01_051E, 
-    FB_ED_COMPLETED_pctGraduate: d.S0502_C01_052E,
-    FB_Naturalized: d3.format("r")((d.FB_pctNaturalized) * (d.FB_Population))
-   // FB_Naturalized: Math.round((d.FB_pctNaturalized) * (d.FB_Population))
-   //
-  }
+    d3.csv('../data/Cleaned Data by State.csv', d=> {
+        return {
+          GEO_LOC_ID: d.GEO_ID,
+          State: d.NAME,
+          FB_Population: +d.S0502_C01_001E, 
+          FB_pctNaturalized: d.S0502_C01_002E, 
+          FB_pctNotCitizen: d.S0502_C01_003E
+        
+        }
+      
+      }).then(data => {
+        state.data = data;
+        myFirstState = state.data[0]
+        firstStateNaturalized = myFirstState.FB_Naturalized
+        typeof myFirstState.FB_Population
+    init();
+  });
 
-}).then(data => {
-
-  console.log("data", data)
-
-     // List of groups (here I have one group per column)
-//     var allGroup = d3.map(data, d=>d.State)
-var  allGroup="Select State"    
- allGroup = d3.map(data, d=>d.State)
-
- /*   FB_Naturalized = d3.map(data, d=>Math.round((d.FB_pctNaturalized) * (d.FB_Population))),
-    FB_NotCitizen  = d3.map(data, d=>Math.round((d.FB_pctNotCitizen) * (d.FB_Population))),
-    FB_WR_Europe      = d3.map(data, d=>Math.round((d.FB_WR_pctEurope) * (d.FB_WR_Population))),
-    FB_WR_Asia        = d3.map(data, d=>Math.round((d.FB_WR_pctAsia) * (d.FB_WR_Population))),
-    FB_WR_Africa      = d3.map(data, d=>Math.round((d.FB_WR_pctAfrica) * (d.FB_WR_Population))),
-    FB_WR_Oceania     = d3.map(data, d=>Math.round((d.FB_WR_pctOceania) * (d.FB_WR_Population))),
-    FB_WR_SouthAmer   = d3.map(data, d=>Math.round((d.FB_WR_pctSouthAmer) * (d.FB_WR_Population))),
-    FB_WR_NorthAmer   = d3.map(data, d=>Math.round((d.FB_WR_pctNorthAmer) * (d.FB_WR_Population)))
- */     
-  
+/* INITIALIZING FUNCTION */
+// this will be run *one time* when the data finishes loading in
+function init() {
+ // keep an original copy of the data before filter is applied
+ // so as to refer to this dataset when there is no filter on the 
+ // column(s)
+    clone = structuredClone(state.data);
+   xScale = d3.scaleBand()
+    .domain(state.data.map(d => d.State))
+    .range([margin.right, width - margin.left])
  
-console.log("allGroup",allGroup)
-// add the options to the button
-     d3.select("#selectButton")
-       .selectAll('myOptions')
-       .data(allGroup)
-       .enter()
-       .append('option')
-       .text(d=> d.State ) // text showed in the menu
-    //   .html(d=> d.State.textContent)
-       .attr("value", d=> d.State) // corresponding value returned by the button
-    //   .text(function (d) { return d.State; }) // text showed in the menu
-     //  .attr("value", function (d) { return d; }) // corresponding value returned by the button
+  yScale = d3.scaleLinear()
+   .domain(0,d3.max(filteredData, d => d.FB_Population))
+  .range([height - margin.bottom, margin.top])
  
-    /* SCALES */
-    /** This is where you should define your scales from data to pixel space */
-    const xScale = d3.scaleLinear()
-    .domain([0,d3.max(data, d=> d.FB_WR_Population)])
-    .range([margin,width - margin])
-    //.text("Population")
-    
-    const yScale = d3.scaleBand()
-      .domain([0,data.map(d=> d.FB_pctNaturalized)])
-      .range([margin, height - margin]) //visual variable
-      .paddingInner(.2) 
-    //  .text("% Naturalized")
-    
-       console.log("count", data)
-    
-     //   console.log("d.FB_WR_Population", d.FB_WR_Population)
+  // + AXES
+  xAxis = d3.axisBottom(xScale)
+    .ticks(8) // limit the number of tick marks showing -- note: this is approximate
+ 
+  yAxis = d3.axisLeft(yScale)
+    .ticks(8)
 
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
+ 
+// + UI ELEMENT SETUP FOR STATE
+const selectElement2 = d3.select("#dropdown2")
 
-    // const color = d3.scale.ordinal().range(["red","yellow","green","blue","purple"])
+// add in dropdown options from the unique values in the data
+selectElement2.selectAll("option")
+  .data([
+    // manually add the first value
+    "Property",
+    // add in all the unique values from the dataset
+    ...new Set(FB_FieldList)])
+  .enter()
+  .append('option')
+  .attr('value', (d) => d[2])
+  .text((d) => d[1]);
+ 
+  // + SET SELECT ELEMENT'S DEFAULT VALUE (optional)
+selectElement2.on("change", event => {
+    FB_FieldList.selection = event.target.value
+});
+
+  // + UI ELEMENT SETUP FOR STATE
+  const selectElement = d3.select("#dropdown")
+
+  // add in dropdown options from the unique values in the data
+  selectElement.selectAll("option")
+    .data([
+      // manually add the first value
+      "Select a state",
+      // add in all the unique values from the dataset
+      ...new Set(state.data.map(d => d.State))])
+    .join("option")
+    .attr("attr", d => d)
+    .text(d => d)
+
+  // + SET SELECT ELEMENT'S DEFAULT VALUE (optional)
+  selectElement.on("change", event => {
+    state.selection = event.target.value
     
+   draw(); // re-draw the graph based on this new selection
+  });
 
-  color = d3.scaleOrdinal()
-  .range(["#FF0000","#FFFF00","#00FF00","#0000FF","#A020F0"])
+  // + CREATE SVG ELEMENT
+  svg = d3.select("#container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+
+  // + CALL AXES
+  xAxisGroup = svg.append("g")
+    .attr("class", "xAxis")
+    .attr("transform", `translate(${0}, ${height - margin.bottom})`)
+    .call(xAxis)
+      .selectAll("text")
+      .style("text-anchor","end")
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", "rotate(-65)")
    
-    /* HTML ELEMENTS */
-    /** Select your container and append the visual elements to it */
-    //svg
-    const svg = d3.select("#container")
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
+      svg.append("text")
+      .attr("transform", "translate(" + (width/2) + " ," + (height + margin.bottom - 10) + ")")
+      .style("text-anchor", "middle")
+      .text("States")
+  
 
-    // bars
-    svg.selectAll("rect")
-      .data(data)
-      .join("rect")
-      .attr("class","bar")
-      .attr("x", margin)
-      .attr("y", d=>yScale(d.FB_WR_Population))
-      .attr("height", yScale.bandwidth()) 
-      .attr("width", d=>xScale(d.FB_pctNaturalized*d.FB_WR_Population)-margin)
+  yAxisGroup = svg.append("g")
+    .attr("class", "yAxis")
+    .attr("transform", `translate(${margin.right}, ${0})`)
+    .call(yAxis)
+
+  yAxisGroup.append("text")
+    .attr("class", 'yLabel')
+    .attr("transform", `translate(${-45}, ${height / 2})`)
+    .attr("writing-mode", 'vertical-rl')
+    .text("Population")
+
+  
+ draw(); // calls the draw function
+}
+
+/* DRAW FUNCTION */
+// we call this everytime there is an update to the data/state
+function draw() {
+
+
+  // + FILTER DATA BASED ON STATE
+  let filteredData = state.data
+  let unFilteredData = state.data
+  
+  // create an if ondition that only filters data if state.selection <> 'All'
+  if (state.selection !== 'Select a state') 
+    {
+     filteredData = state.data.filter((d) => d.State === state.selection)
+  console.log('selection by STATE', state.selection)
+  //console.log('state.State', (state.data) => State)
+  console.log("LINE 228-I am here:==>filteredData NOT 'All'", filteredData)  }
+    else
+    {
+   filteredData =  clone
+  
+   
+    }
+
+  // + UPDATE SCALE(S), if needed
+  xScale.domain(filteredData.map(d => d.State))
+console.log('xScale.domain:',xScale.domain())
+
+  // + UPDATE AXIS/AXES, if needed
+  xAxisGroup
+   .transition()
+   .duration(1000)
+   .attr("stroke","blue")
+   .call(xAxis.scale(xScale))// need to udpate the scale
+ 
+  
+  yScale.domain(0,d3.max(filteredData, d => d.FB_Population))
+ // yScale.domain(d3.extent(filteredData, d => d.FB_Population))
+ 
+ // + UPDATE AXIS/AXES, if needed
+
+  yAxisGroup
+    .transition()
+    .duration(1000)
+    .call(yAxis.scale(yScale))// need to udpate the scale
+
+ 
+ const rect = svg
+     .selectAll("rect.bar")
+     .data([state.data])
+    // .data([filteredData])
+     .join("rect")
+     .attr("class","bar")
+     .attr("width", xScale.bandwidth())
+     .attr("x", d=> xScale(filteredData[0].State))
+     .attr("y", d=> yScale(filteredData[0].FB_Population))
+     .attr("height",  height - margin.bottom - margin.top )
       .attr("fill", function(d, i) {
         return color(i);
-      })
-      .text(function(d,i) {
-        return data[i].FB_WR_Population;
-      });
+      } )
+    .transition()
+     .duration(1000)
+
     
-    // append xAxis
-    svg
-      .append("g")
-      .attr("class", "x-axis")
-      .style("transform", `translate(0px, ${height - margin}px)`)
-      .call(xAxis)
-  
- // append yAxis
- svg
- .append("g")
- .attr("class", "y-axis")
- .style("transform", `translate(${margin}px, 0px)`)
- .call(yAxis)
- 
- svg
- .append("g")
- .attr("class", "#selectButton")
- //.style("transform", `translate(${margin}px, 0px)`)
- .attr("width", 150)
- .attr("height", 150)
 
-     // Initialize bar with first group of the list
-     //var line = svg
-     .append('g')
-     .append("rect")
-       .datum(data.filter(function(d){return d.State==allGroup[0]}))
-       //.attr("d", d3.line()
-       //  .x(function(d) { return x(d.FB_WR_Population) })
-       //  .y(function(d) { return y(d.FB_WR_pctEurope) })
-       //.attr("stroke", function(d){ return myColor("valueA") })
-       .style("stroke-width", 4)
-       .style("fill", "none")
-
-   // A function that update the chart
-   function update(selectedGroup) {
-          // Create new data with the selection?
-          var dataFilter = data.filter(function(d){return d.State==selectedGroup})
-
-          // Give these new data to update line
- /*         line
-              .datum(dataFilter)
-              .transition()
-              .duration(1000)
-              .attr("d", d3.line()
-                .x(function(d) { return x(d.year) })
-                .y(function(d) { return y(+d.n) })
-              )
-              //.attr("stroke", function(d){ return myColor(selectedGroup) })
-   */       }
-    
-    // When the button is changed, run the updateChart function
-    d3.select("#selectButton").on("change", function(d) {
-      // recover the option that has been chosen
-      var selectedOption = d3.select(this).property("value")
-      // run the updateChart function with this selected option
-      update(selectedOption)
-  //    .html(selectedOption.textContent);
-      
-      console.log(selectedOption)
-
-    })
-
-  // ADD CHART TITLE
-  svg
-  .append("text")
-  .attr("class", "title")
-  .attr("x", width / 2)
-  .attr("y", height / 20) //higher the denominator, higher the text moves up pg
-  .attr("text-anchor", "middle")
-  .text('Where Immigrants came from') 
-  .attr("font-family", "Cursive")
-  .style("font-size", "18px")
-  .style("font-weight", "bold")
-  .attr("fill", "blue")
-      });
+    }
