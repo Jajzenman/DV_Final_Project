@@ -52,6 +52,8 @@ let state = {
         myFirstState = state.data[0]
         firstStateNaturalized = myFirstState.FB_Naturalized
         typeof myFirstState.FB_Population
+
+
     init();
   });
 
@@ -172,7 +174,8 @@ function draw() {
      filteredData = state.data.filter((d) => d.State === state.selection)
   console.log('selection by STATE', state.selection)
   //console.log('state.State', (state.data) => State)
-  console.log("LINE 228-I am here:==>filteredData NOT 'All'", filteredData)  }
+  console.log("filteredData", filteredData)
+  console.log("filteredData NOT 'All'", filteredData)  }
     else
     {
    filteredData =  clone
@@ -194,7 +197,7 @@ console.log('xScale.domain:',xScale.domain())
   
   yScale.domain(0,d3.max(filteredData, d => d.FB_Population))
  // yScale.domain(d3.extent(filteredData, d => d.FB_Population))
- 
+ console.log('yScale.domain:',yScale.domain())
  // + UPDATE AXIS/AXES, if needed
 
   yAxisGroup
