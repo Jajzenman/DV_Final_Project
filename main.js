@@ -37,7 +37,7 @@ let state = {
 // + SET YOUR DATA PATH
 
     /* LOAD DATA */
-    d3.csv('../data/Cleaned Data by State.csv', d=> {
+    d3.csv('data/Cleaned Data by State.csv', d=> {
         return {
           GEO_LOC_ID: d.GEO_ID,
           State: d.NAME,
