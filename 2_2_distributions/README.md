@@ -1,0 +1,1 @@
+Updated to show the effects of ScaleSqRt; so that each company (organization) listed would be reflected by the size of the sector that the organization was in.
