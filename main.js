@@ -42,6 +42,7 @@ let state = {
           GEO_LOC_ID: d.GEO_ID,
           State: d.NAME,
           FB_Population: +d.S0502_C01_001E, 
+        // FB_Population: Number(d.S0502_C01_001E), 
           FB_pctNaturalized: d.S0502_C01_002E, 
           FB_pctNotCitizen: d.S0502_C01_003E
         
@@ -69,7 +70,7 @@ function init() {
     .range([margin.right, width - margin.left])
  
   yScale = d3.scaleLinear()
-   .domain(0,d3.max(filteredData, d => d.FB_Population))
+   .domain([0,d3.max(filteredData, d=> d.FB_Population)])
   .range([height - margin.bottom, margin.top])
  
   // + AXES
@@ -87,7 +88,8 @@ const selectElement2 = d3.select("#dropdown2")
 selectElement2.selectAll("option")
   .data([
     // manually add the first value
-    "Property",
+    //"Property",
+    "",
     // add in all the unique values from the dataset
     ...new Set(FB_FieldList)])
   .enter()
@@ -165,8 +167,8 @@ function draw() {
 
 
   // + FILTER DATA BASED ON STATE
-  let filteredData = state.data
-  let unFilteredData = state.data
+  filteredData = state.data
+  unFilteredData = state.data
   
   // create an if ondition that only filters data if state.selection <> 'All'
   if (state.selection !== 'Select a state') 
@@ -184,7 +186,7 @@ function draw() {
     }
 
   // + UPDATE SCALE(S), if needed
-  xScale.domain(filteredData.map(d => d.State))
+ // xScale.domain(filteredData.map(d => d.State))
 console.log('xScale.domain:',xScale.domain())
 
   // + UPDATE AXIS/AXES, if needed
@@ -195,7 +197,7 @@ console.log('xScale.domain:',xScale.domain())
    .call(xAxis.scale(xScale))// need to udpate the scale
  
   
-  yScale.domain(0,d3.max(filteredData, d => d.FB_Population))
+  yScale.domain([0,d3.max(filteredData, d => d.FB_Population)])
  // yScale.domain(d3.extent(filteredData, d => d.FB_Population))
  console.log('yScale.domain:',yScale.domain())
  // + UPDATE AXIS/AXES, if needed
