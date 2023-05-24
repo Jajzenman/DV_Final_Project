@@ -4,7 +4,8 @@ const width = window.innerWidth * 0.9,
   margin = { top: 20, bottom: 125, left: 60, right: 60 },
   radius = 3;
   const color = d3.scaleOrdinal()
-  .range(["#d0743c","#6b486b", "#a05d56", "#ff8c00"])
+  .range(["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"])
+  // .range(["#d0743c","#6b486b", "#a05d56", "#ff8c00"])
 
 // these variables allow us to access anything we manipulate in init() but need access to in draw().
 // All these variables are empty before we assign something to them.
@@ -210,14 +211,14 @@ console.log('xScale.domain:',xScale.domain())
  
  const rect = svg
      .selectAll("rect.bar")
-     .data([state.data])
-    // .data([filteredData])
+    //  .data(state.data)
+     .data(filteredData)
      .join("rect")
      .attr("class","bar")
      .attr("width", xScale.bandwidth())
-     .attr("x", d=> xScale(filteredData[0].State))
-     .attr("y", d=> yScale(filteredData[0].FB_Population))
-     .attr("height",  height - margin.bottom - margin.top )
+     .attr("x", d=> xScale(d.State))
+     .attr("y", d=> yScale(d.FB_Population))
+     .attr("height",  d => height - margin.bottom - yScale(d.FB_Population))
       .attr("fill", function(d, i) {
         return color(i);
       } )
