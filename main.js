@@ -18,20 +18,27 @@ let yAxisGroup;
 let myFirstState = [];
 let firstStateNaturalized = 0;
 let FB_FieldList = [
-    [1,'Population','d.FB_Population'],
-    [2,'Not A Citizen','d.FB_pctNaturalized'],
-    [3,'Naturalized', 'd.FB_pctNotCitizen']
+  [1,'Population','d.FB_Population'],
+  [2,'Naturalized','d.FB_pctNaturalized'],
+  [3,'Not A Citizen', 'd.FB_pctNotCitizen'],
+  [4,'Foreign Born','d.FB_WR_Population'],
+  [5,'Male','d.FB_SEX_pctMale'],
+  [6,'Female','d.FB_SEX_pctFemale'],
+  [7,'Median age','d.FB_SEX_Median_age_years'],
+  [8,'Household-Avg Family Size','d.FB_HOUSEHOLD_AvgFamilySize'],
+  [9,'MARITAL-Married','d.FB_MARITAL_pctNow_married'],
+  [10,'SCHOOL-In School','d.FB_SCHOOL_PopulationInSchool']
 ];
 let StartingField ="Population";
 let ChosenField = 1;
 let filteredData = [];
 let unFilteredData = [];
 let clone;
-
+console.log(FB_FieldList)
 /* APPLICATION STATE */
 let state = {
   data: [],
-  selection: "Select a state", // + YOUR FILTER SELECTION
+  selection: "All States", // + YOUR FILTER SELECTION
   selectedStates: []
 };
 /* LOAD DATA */
@@ -45,7 +52,59 @@ let state = {
           FB_Population: +d.S0502_C01_001E,
         // FB_Population: Number(d.S0502_C01_001E),
           FB_pctNaturalized: d.S0502_C01_002E,
-          FB_pctNotCitizen: d.S0502_C01_003E
+          FB_pctNotCitizen: d.S0502_C01_003E,
+          FB_WR_Population: d.S0502_C01_004E, 
+          FB_WR_pctEurope: d.S0502_C01_005E, 
+          FB_WR_pctAsia: d.S0502_C01_006E, 
+          FB_WR_pctAfrica: d.S0502_C01_007E, 
+          FB_WR_pctOceania: d.S0502_C01_008E, 
+          FB_WR_pctSouthAmer: d.S0502_C01_009E, 
+          FB_WR_pctNorthAmer: d.S0502_C01_010E, 
+          FB_SEX_pctMale: d.S0502_C01_011E, 
+          FB_SEX_pctFemale: d.S0502_C01_012E, 
+          FB_SEX_pct0_5_years: d.S0502_C01_013E, 
+          FB_SEX_pct5_to_17_years: d.S0502_C01_014E, 
+          FB_SEX_pct18_to_24_years: d.S0502_C01_015E, 
+          FB_SEX_pct25_to_44_years: d.S0502_C01_016E, 
+          FB_SEX_pct45_to_54_years: d.S0502_C01_017E, 
+          FB_SEX_pct55_to_64_years: d.S0502_C01_018E, 
+          FB_SEX_pct65_to_74_years: d.S0502_C01_019E, 
+          FB_SEX_pct75_to_84_years: d.S0502_C01_020E, 
+          FB_SEX_pct85_over: d.S0502_C01_021E, 
+          FB_SEX_Median_age_years: d.S0502_C01_022E, 
+          FB_RACE_pct: d.S0502_C01_023E, 
+          FB_RACE_pctWhite: d.S0502_C01_024E, 
+          FB_RACE_pctBlack: d.S0502_C01_025E, 
+          FB_RACE_pctAmerIndian: d.S0502_C01_026E, 
+          FB_RACE_pctAsian: d.S0502_C01_027E, 
+          FB_RACE_pctHawaiian: d.S0502_C01_028E, 
+          FB_RACE_pctOtherRace: d.S0502_C01_029E, 
+          FB_RACE_pctMixedRace: d.S0502_C01_030E, 
+          FB_RACE_pctLatino: d.S0502_C01_031E, 
+          FB_RACE_pctWhite_NotLatino: d.S0502_C01_032E, 
+          FB_HOUSEHOLD_pctMarried: d.S0502_C01_033E, 
+          FB_HOUSEHOLD_pctOther: d.S0502_C01_034E, 
+          FB_HOUSEHOLD_Avg_Size: d.S0502_C01_035E, 
+          FB_HOUSEHOLD_AvgFamilySize: d.S0502_C01_036E, 
+          FB_MARITAL_Married15plusYears: d.S0502_C01_037E, 
+          FB_MARITAL_pctNeverMarried: d.S0502_C01_038E, 
+          FB_MARITAL_pctNow_married: d.S0502_C01_039E, 
+          FB_MARITAL_pctDivorced: d.S0502_C01_040E, 
+          FB_MARITAL_pctWidowed: d.S0502_C01_041E, 
+          FB_SCHOOL_PopulationInSchool: d.S0502_C01_042E, 
+          FB_SCHOOL_pctNursery: d.S0502_C01_043E, 
+          FB_SCHOOL_pctElementarySchool: d.S0502_C01_044E, 
+          FB_SCHOOL_pctHighSchool: d.S0502_C01_045E, 
+          FB_SCHOOL_pctCollege: d.S0502_C01_046E, 
+          FB_ED_COMPLETED_Population_25_yrPlus: d.S0502_C01_047E, 
+          FB_ED_COMPLETED_pctLessThan_HS: d.S0502_C01_048E, 
+          FB_ED_COMPLETED_pctHighSchool: d.S0502_C01_049E, 
+          FB_ED_COMPLETED_pctSomeCollege: d.S0502_C01_050E, 
+          FB_ED_COMPLETED_pctBachelor: d.S0502_C01_051E, 
+          FB_ED_COMPLETED_pctGraduate: d.S0502_C01_052E,
+          FB_Naturalized: d3.format("r")((d.FB_pctNaturalized) * (d.FB_Population))
+        // FB_Naturalized: Math.round((d.FB_pctNaturalized) * (d.FB_Population))
+   //
 
         }
 
@@ -77,7 +136,7 @@ function init() {
     .ticks(8)
 
 
-// + UI ELEMENT SETUP FOR STATE
+// + UI ELEMENT SETUP FOR CHOOSING THE FIELD TO BE USED IN yAxis
 const selectElement2 = d3.select("#dropdown2")
 
 // add in dropdown options from the unique values in the data
@@ -105,7 +164,7 @@ selectElement2.on("change", event => {
   selectElement.selectAll("option")
     .data([
       // manually add the first value
-      "Select a state",
+      "All States",
       // add in all the unique values from the dataset
       ...new Set(state.data.map(d => d.State))])
     .join("option")
@@ -166,7 +225,7 @@ function draw() {
   unFilteredData = state.data
 
   // create an if ondition that only filters data if state.selection <> 'All'
-  if (!state.selectedStates.includes('Select a state') && 
+  if (!state.selectedStates.includes('All States') && 
       state.selectedStates.length>0) {
         filteredData = state.data.filter((d) => state.selectedStates.includes(d.State))
   } else {
