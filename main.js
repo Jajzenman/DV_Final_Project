@@ -144,7 +144,7 @@ selectElement2.selectAll("option")
   .data([
     // manually add the first value
     //"Property",
-    "",
+    //"",
     // add in all the unique values from the dataset
     ...new Set(FB_FieldList)])
   .enter()
