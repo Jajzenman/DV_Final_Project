@@ -30,23 +30,44 @@ let yAxisGroup;
 let myFirstState = [];
 let firstStateNaturalized = 0;
 let FB_FieldList = [
-  [1, "Population", "FB_Population"],
-  [2, "Naturalized", "FB_pctNaturalized"],
-  [3, "Not A Citizen", "FB_pctNotCitizen"],
-  [4, "Foreign Born", "FB_WR_Population"],
-  [5, "Male", "FB_SEX_pctMale"],
-  [6, "Female", "FB_SEX_pctFemale"],
-  [7, "Median age", "FB_SEX_Median_age_years"],
-  [8, "Household-Avg Family Size", "FB_HOUSEHOLD_AvgFamilySize"],
-  [9, "MARITAL-Married", "FB_MARITAL_pctNow_married"],
-  [10, "SCHOOL-In School", "FB_SCHOOL_PopulationInSchool"],
+  [1, "Population", "FB_Population", "Foreign Born Population"],
+  [2, "Naturalized", "FB_pctNaturalized", "Foreign Born Pct Naturalized"],
+  [3, "Not A Citizen", "FB_pctNotCitizen", "Foreign Born Pct Not a Citizen"],
+  [4, "Foreign Born", "FB_WR_Population", "Foreign Born World Population"],
+  [5, "Male", "FB_SEX_pctMale", "Foreign Born Pct Male"],
+  [6, "Female", "FB_SEX_pctFemale", "Foreign Born Pct Female"],
+  [7, "Median age", "FB_SEX_Median_age_years", "Foreign Born Median Age"],
+  [
+    8,
+    "Household-Avg Family Size",
+    "FB_HOUSEHOLD_AvgFamilySize",
+    "Foreign Born Avg Family Size",
+  ],
+  [
+    9,
+    "MARITAL-Married",
+    "FB_MARITAL_pctNow_married",
+    "Foreign Born Pct Married",
+  ],
+  [
+    10,
+    "SCHOOL-In School",
+    "FB_SCHOOL_PopulationInSchool",
+    "Foreign Born in School",
+  ],
 ];
 let StartingField = "Population";
 let ChosenField = 1;
 let ChosenFieldName = "FB_Population";
+let ChosenField_h2 = "Foreign Born Population";
 let filteredData = [];
 let unFilteredData = [];
 let clone;
+let dropBoxState;
+let elem;
+
+const txtHover = "Right mouse click + CMD to choose multiple items";
+
 console.log(FB_FieldList);
 /* APPLICATION STATE */
 let state = {
@@ -166,8 +187,21 @@ function init() {
   // + SET SELECT ELEMENT'S DEFAULT VALUE (optional)
   selectElement2.on("change", (event) => {
     FB_FieldList.selection = event.target.value;
-
     ChosenFieldName = event.target.value;
+    ChosenField_h2 = event.target.value;
+
+    // Find 4th element of array so as to display ChosenField_h2
+    console.log("FB_FieldList = ", FB_FieldList);
+    console.log("FB_FieldList = ", FB_FieldList[(0, 3)]);
+
+    const indexOfThree = FB_FieldList.findIndex(
+      (x) => x.id === ChosenFieldName
+    );
+    console.log("ChosenFieldName = ", ChosenFieldName);
+    console.log("indexOfThree = ", indexOfThree);
+    elem = document.querySelector("h2");
+    elem.innerHTML = "<center>" + ChosenFieldName + "</center>";
+    // END Find 4th element of array so as to display ChosenField_h2
 
     draw();
   });
@@ -187,6 +221,22 @@ function init() {
     .join("option")
     .attr("attr", (d) => d)
     .text((d) => d);
+
+  //selectElement.on("mouseover", (event) => {//
+  // HOVER EVENT
+  /*
+  dropBoxState = document.getElementbyID("dropdown");
+  console.log("dropBoxState = ", dropBoxState);
+  console.log(typeof dropBoxState);
+  dropBoxState.attachEventListener("mouseover", RespondMouseOver);
+
+  function RespondMouseOver() {
+    alert(txtHover);
+  }
+  */
+  // *************    END function RespondMouseOver
+
+  //dropBoxState.onmouseover("Right mouse click + CMD to choose multiple items");
 
   selectElement.on("change", (event) => {
     state.selectedStates = [];
@@ -224,15 +274,18 @@ function init() {
   yAxisGroup = svg
     .append("g")
     .attr("class", "yAxis")
-    .attr("transform", `translate(${margin.right}, ${0})`)
+    .attr("transform", `translate(${margin.left}, ${0})`)
     .call(yAxis);
 
+  // add labels - yAxis
   yAxisGroup
     .append("text")
-    .attr("class", "yLabel")
-    .attr("transform", `translate(${-45}, ${height / 2})`)
-    .attr("writing-mode", "vertical-rl")
-    .text("Population");
+    .attr("class", "yAxis")
+    .attr("x", -70)
+    .attr("y", height / 2)
+    .attr("writing-mode", "vertical-lr")
+    .attr("text-anchor", "middle")
+    .text("Environmental Score 2020");
 
   draw(); // calls the draw function
 }
@@ -281,7 +334,29 @@ function draw() {
   // + UPDATE AXIS/AXES, if needed
 
   // Update the yAxis, wih 1-second transition
-  yAxisGroup.transition().duration(1000).call(yAxis.scale(yScale)); // need to udpate the scale
+  yAxisGroup.transition().duration(1000).call(yAxis.scale(yScale)); // need to
+
+  // add labels - yAxis
+  yAxisGroup
+    .append("text")
+    .attr("class", "yLabel")
+    //    .attr("transform", "rotate(0)")
+    .attr("x", -40)
+    .attr("y", height / 2)
+    .attr("dy", ".71em")
+    .attr("writing-mode", "vertical-lr")
+    .attr("text-anchor", "middle")
+    .text("Environmental Score 2020");
+
+  /*     .append("text")
+    .attr("class", "axis-title")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .attr("fill", "#5D6971")
+    .text("Population)");
+ */ //  draw(); // calls the draw function
+  // udpate the scale
 
   const rect = svg
     .selectAll("rect.bar")
