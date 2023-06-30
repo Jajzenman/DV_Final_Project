@@ -25,17 +25,15 @@ h2 {
   color: blue;
 }
 
-.dropdown {
-  display: inline-block;
-  position: relative;
+.menu {
+  display: flex;
+  flex-direction: row;
 }
 
-.dropdown:hover .dropdown-options {
-  display: block;
-}
-
-.dropdown-options {
-  display: none;
-  position: absolute;
-  overflow: auto;
+#tooltip {
+  visibility: hidden;
+  width: 150px;
+  font-style: italic;
+  font-size: 0.8em;
+  color: blueviolet;
 }

@@ -13,13 +13,22 @@
     </p>
     <center><img src="img/Sources.png" alt="Sources for Immigration Project" width="350" height="140"></center>
     <h3>Immigration Census Evaluation</h3>
-    <div id="header2"> <h2><center>Population</center></h2></div>
+    <div id="header2"> <h2><center>Foreign Born Population</center></h2></div>
       <!-- Initialize a select button -->
-      <label for="dropdown">Select State(s)</label><br />
-      <select id="dropdown" name="dropdown" multiple></select>
+      <div class="menu">
+        <div class="selection-box">
+          <label for="dropdown">Select State(s)</label><br />
+          <select id="dropdown" name="dropdown" multiple></select>
+        </div>
 
-      <label for="dropdown2">Select Property</label>
-      <select id="dropdown2" name="dropdown2" multiple></select>
+<!--  <div id="tooltip">Right mouse click + CMD to choose multiple items</div> -->
+        <div id="tooltip">To choose multiple items: for MAC, Right mouse click + CMD ⌘ key; for PC, Right mouse click + Ctrl key</div>
+
+        <div class="selection-box">
+          <label for="dropdown2">Select Property</label><br />
+          <select id="dropdown2" name="dropdown2" multiple></select>
+        </div>
+      </div>
 
       <div id="container"></div>
 
