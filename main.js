@@ -29,36 +29,53 @@ let xAxisGroup;
 let yAxisGroup;
 let myFirstState = [];
 let firstStateNaturalized = 0;
+
 let FB_FieldList = [
-  [1, "Population", "FB_Population", "Foreign Born Population"],
-  [2, "Naturalized", "FB_pctNaturalized", "Foreign Born Pct Naturalized"],
-  [3, "Not A Citizen", "FB_pctNotCitizen", "Foreign Born Pct Not a Citizen"],
-  [4, "Foreign Born", "FB_WR_Population", "Foreign Born World Population"],
-  [5, "Male", "FB_SEX_pctMale", "Foreign Born Pct Male"],
-  [6, "Female", "FB_SEX_pctFemale", "Foreign Born Pct Female"],
-  [7, "Median age", "FB_SEX_Median_age_years", "Foreign Born Median Age"],
+  [1, "Foreign Born", "FB_WR_Population", "Foreign Born World Population"],
+  [2, "Europe", "FB_WR_pctEurope", "Foreign Born Pct from Europe"],
+  [3, "Asia", "FB_WR_pctAsia", "Foreign Born Pct from Asia"],
+  [4, "Africa", "FB_WR_pctAfrica", "Foreign Born Pct from Africa"],
+  [5, "Oceania", "FB_WR_pctOceania", "Foreign Born Pct from Oceania"],
   [
-    8,
+    6,
+    "South American",
+    "FB_WR_pctSouthAmer",
+    "Foreign Born Pct from South America",
+  ],
+  [
+    7,
+    "North American",
+    "FB_WR_pctNorthAmer",
+    "Foreign Born Pct from North America",
+  ],
+  [8, "Naturalized", "FB_pctNaturalized", "Foreign Born Pct Naturalized"],
+  [9, "Not A Citizen", "FB_pctNotCitizen", "Foreign Born Pct Not a Citizen"],
+
+  [10, "Male", "FB_SEX_pctMale", "Foreign Born Pct Male"],
+  [11, "Female", "FB_SEX_pctFemale", "Foreign Born Pct Female"],
+  [12, "Median age", "FB_SEX_Median_age_years", "Foreign Born Median Age"],
+  [
+    13,
     "Household-Avg Family Size",
     "FB_HOUSEHOLD_AvgFamilySize",
     "Foreign Born Avg Family Size",
   ],
   [
-    9,
+    14,
     "MARITAL-Married",
     "FB_MARITAL_pctNow_married",
     "Foreign Born Pct Married",
   ],
   [
-    10,
+    15,
     "SCHOOL-In School",
     "FB_SCHOOL_PopulationInSchool",
     "Foreign Born in School",
   ],
 ];
-let StartingField = "Population";
+let StartingField = "Foreign Born";
 let ChosenField = 1;
-let ChosenFieldName = "FB_Population";
+let ChosenFieldName = "FB_WR_Population";
 let ChosenField_h2 = "Foreign Born Population";
 let filteredData = [];
 let unFilteredData = [];
@@ -68,7 +85,6 @@ let elem;
 
 const txtHover = "Right mouse click + CMD to choose multiple items";
 
-console.log(FB_FieldList);
 /* APPLICATION STATE */
 let state = {
   data: [],
@@ -188,19 +204,22 @@ function init() {
   selectElement2.on("change", (event) => {
     FB_FieldList.selection = event.target.value;
     ChosenFieldName = event.target.value;
-    ChosenField_h2 = event.target.value;
 
     // Find 4th element of array so as to display ChosenField_h2
-    console.log("FB_FieldList = ", FB_FieldList);
-    console.log("FB_FieldList = ", FB_FieldList[(0, 3)]);
 
-    const indexOfThree = FB_FieldList.findIndex(
-      (x) => x.id === ChosenFieldName
-    );
-    console.log("ChosenFieldName = ", ChosenFieldName);
-    console.log("indexOfThree = ", indexOfThree);
+    const [index, shortDescription, fieldName, longDescription] =
+      FB_FieldList.find(
+        ([index, shortDescription, fieldName, longDescription]) =>
+          fieldName == ChosenFieldName
+      );
+
+    // const entry = FB_FieldList.find(
+    //   (x) => x[2] == ChosenFieldName
+    // );
+    // const fieldName2 = entry[3]
+    // console.log("indexOfThree = ", indexOfThree);
     elem = document.querySelector("h2");
-    elem.innerHTML = "<center>" + ChosenFieldName + "</center>";
+    elem.innerHTML = "<center>" + longDescription + "</center>";
     // END Find 4th element of array so as to display ChosenField_h2
 
     draw();
@@ -222,21 +241,17 @@ function init() {
     .attr("attr", (d) => d)
     .text((d) => d);
 
-  //selectElement.on("mouseover", (event) => {//
   // HOVER EVENT
-  /*
-  dropBoxState = document.getElementbyID("dropdown");
-  console.log("dropBoxState = ", dropBoxState);
-  console.log(typeof dropBoxState);
-  dropBoxState.attachEventListener("mouseover", RespondMouseOver);
 
-  function RespondMouseOver() {
-    alert(txtHover);
-  }
-  */
-  // *************    END function RespondMouseOver
+  const tooltip = document.querySelector("#tooltip");
 
-  //dropBoxState.onmouseover("Right mouse click + CMD to choose multiple items");
+  selectElement.on("mouseover", (event) => {
+    tooltip.style["visibility"] = "visible";
+  });
+
+  selectElement.on("mouseout", (event) => {
+    tooltip.style["visibility"] = "hidden";
+  });
 
   selectElement.on("change", (event) => {
     state.selectedStates = [];
@@ -373,6 +388,4 @@ function draw() {
     })
     .transition()
     .duration(1000);
-
-  console.log(ChosenFieldName);
 }
